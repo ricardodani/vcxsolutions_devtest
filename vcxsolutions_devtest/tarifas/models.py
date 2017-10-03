@@ -29,13 +29,17 @@ class Plan(models.Model):
         return '{}{}'.format(self.data_pack_value, self.data_pack_unit)
     data_pack.fget.short_description = 'Pacote de dados'
 
-    sms_pack_size = models.PositiveIntegerField(
+    sms_pack_size = models.IntegerField(
         verbose_name='Pacote de SMS',
+        default=0,
     )
 
     @property
     def sms_pack(self):
-        return '{} SMS'.format(self.sms_pack_size)
+        if self.sms_pack_size > 0:
+            return '{} SMS'.format(self.sms_pack_size)
+        else:
+            return '-'
     sms_pack.fget.short_description = 'Pacote de SMS'
 
     value = models.DecimalField(
