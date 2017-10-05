@@ -1,4 +1,5 @@
 2017-10-03 5:00 PM - Iniciei o entendimento do problema e criei a base do projeto
 2017-10-03 6:13 PM - Finalizei a base dos models e admin, partirei pra importação do excel em seguida, parei por hora.
 2017-10-05 6:00 PM - Retomei o job, admin em pt-br, criei um readme e requirements, repo no github
+2017-10-05 7:00 PM - Terminai o command pra importar os dados da planilha (manage.py import_tarifas)
 
