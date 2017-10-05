@@ -53,6 +53,7 @@ class Plan(models.Model):
 
     class Meta:
         verbose_name = 'Plano'
+        ordering = ['name']
 
 
 class SMSPlan(models.Model):
@@ -84,6 +85,7 @@ class SMSPlan(models.Model):
     class Meta:
         verbose_name = 'Plano de SMS Adicional'
         verbose_name_plural = 'Planos de SMS Adicionais'
+        ordering = ['sms_pack_size']
 
 
 class DataPlan(models.Model):
@@ -115,3 +117,4 @@ class DataPlan(models.Model):
 
     class Meta:
         verbose_name = 'Plano de Dados Adicional'
+        ordering = ['data_pack_value']
