@@ -14,25 +14,34 @@ class Plan(models.Model):
         default=0
     )
 
-    data_pack_unit = models.CharField(
+    data_mb = models.IntegerField(
+        verbose_name='Pacote de dados (MB)',
+    )
+
+    data_unit = models.CharField(
         verbose_name='Pacote de dados (unidade)',
         choices=(('MB', 'Megabyte'), ('GB', 'Gigabyte')),
         max_length=2
     )
 
-    data_pack_value = models.PositiveIntegerField(
-        verbose_name='Pacote de dados (valor)',
-    )
-
-    @property
-    def data_pack(self):
-        return '{}{}'.format(self.data_pack_value, self.data_pack_unit)
-    data_pack.fget.short_description = 'Pacote de dados'
-
     sms_pack_size = models.IntegerField(
         verbose_name='Pacote de SMS',
         default=0,
     )
+
+    value = models.DecimalField(
+        verbose_name='Valor',
+        decimal_places=2,
+        max_digits=8
+    )
+
+    @property
+    def data_display(self):
+        if self.data_unit == 'MB':
+            return '{}MB'.format(self.data_mb)
+        else:
+            return '{}GB'.format(self.data_mb // 1024)
+    data_display.fget.short_description = 'Pacote de dados'
 
     @property
     def sms_pack(self):
@@ -41,12 +50,6 @@ class Plan(models.Model):
         else:
             return '-'
     sms_pack.fget.short_description = 'Pacote de SMS'
-
-    value = models.DecimalField(
-        verbose_name='Valor',
-        decimal_places=2,
-        max_digits=8
-    )
 
     def __str__(self):
         return self.name
@@ -65,14 +68,6 @@ class SMSPlan(models.Model):
         blank=True
     )
 
-    @property
-    def sms_pack(self):
-        if self.sms_pack_size:
-            return '{} SMS'.format(self.sms_pack_size)
-        else:
-            return 'SMS ILIMITADOS'
-    sms_pack.fget.short_description = 'Pacote de SMS Adicional'
-
     value = models.DecimalField(
         verbose_name='Valor',
         decimal_places=2,
@@ -80,7 +75,10 @@ class SMSPlan(models.Model):
     )
 
     def __str__(self):
-        return self.sms_pack
+        if self.sms_pack_size:
+            return '{} SMS'.format(self.sms_pack_size)
+        else:
+            return 'SMS ILIMITADOS'
 
     class Meta:
         verbose_name = 'Plano de SMS Adicional'
@@ -91,20 +89,15 @@ class SMSPlan(models.Model):
 class DataPlan(models.Model):
     '''Plano de Dados Adicional'''
 
-    data_pack_unit = models.CharField(
+    data_mb = models.IntegerField(
+        verbose_name='Pacote de dados (MB)',
+    )
+
+    data_unit = models.CharField(
         verbose_name='Pacote de dados (unidade)',
         choices=(('MB', 'Megabyte'), ('GB', 'Gigabyte')),
         max_length=2
     )
-
-    data_pack_value = models.PositiveIntegerField(
-        verbose_name='Pacote de dados (valor)',
-    )
-
-    @property
-    def data_pack(self):
-        return '{}{}'.format(self.data_pack_value, self.data_pack_unit)
-    data_pack.fget.short_description = 'Pacote de dados Adicional'
 
     value = models.DecimalField(
         verbose_name='Valor',
@@ -113,8 +106,11 @@ class DataPlan(models.Model):
     )
 
     def __str__(self):
-        return self.data_pack
+        if self.data_unit == 'MB':
+            return '{}MB'.format(self.data_unit)
+        else:
+            return '{}GB'.format(self.data_unit / 1024)
 
     class Meta:
         verbose_name = 'Plano de Dados Adicional'
-        ordering = ['data_pack_value']
+        ordering = ['data_mb']

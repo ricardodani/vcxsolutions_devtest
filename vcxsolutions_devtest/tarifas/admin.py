@@ -3,15 +3,15 @@ from tarifas.models import Plan, SMSPlan, DataPlan
 
 
 class PlanAdmin(admin.ModelAdmin):
-    list_display = ('name', 'data_pack', 'sms_pack', 'value')
+    list_display = ('__str__', 'data_display', 'sms_pack', 'value')
 
 
 class SMSPlanAdmin(admin.ModelAdmin):
-    list_display = ('sms_pack', 'value')
+    list_display = ('__str__', 'value')
 
 
 class DataPlanAdmin(admin.ModelAdmin):
-    list_display = ('data_pack', 'value')
+    list_display = ('__str__', 'value')
 
 
 admin.site.register(Plan, PlanAdmin)

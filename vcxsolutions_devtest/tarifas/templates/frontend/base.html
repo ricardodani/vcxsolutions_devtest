@@ -1,0 +1,33 @@
+{% load staticfiles %}
+{% load compress %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>AceitaBitcoin.info</title>
+
+        <link rel="icon" href="./favicon.ico">
+        <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-4.0.0-beta-dist/css/bootstrap.min.css' %}" media="screen">
+
+        {% compress css %}
+        <link type="text/x-scss" rel="stylesheet" href="{% static 'scss/home.scss' %}" charset="utf-8">
+        <link type="text/x-scss" rel="stylesheet" href="{% static 'scss/header.scss' %}" charset="utf-8">
+        {% endcompress %}
+    </head>
+
+    <body>
+        {% include "frontend/navbar.html" %}
+
+        <div class="container">
+            {% block content %}
+            {% endblock content %}
+        </div>
+    </body>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="{% static 'bootstrap-4.0.0-beta-dist/js/bootstrap.min.js' %}" charset="utf-8">
+</html>
