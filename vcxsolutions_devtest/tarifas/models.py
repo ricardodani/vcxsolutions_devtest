@@ -107,9 +107,9 @@ class DataPlan(models.Model):
 
     def __str__(self):
         if self.data_unit == 'MB':
-            return '{}MB'.format(self.data_unit)
+            return '{}MB'.format(self.data_mb)
         else:
-            return '{}GB'.format(self.data_unit / 1024)
+            return '{}GB'.format(self.data_mb // 1024)
 
     class Meta:
         verbose_name = 'Plano de Dados Adicional'
