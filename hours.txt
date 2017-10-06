@@ -3,5 +3,6 @@
 2017-10-05 6:00 PM - Retomei o job, admin em pt-br, criei um readme e requirements, repo no github
 2017-10-05 8:00 PM - Terminai o command pra importar os dados da planilha (manage.py import_tarifas)
 2017-10-06 4:50 PM - Mudei o modelo par salvar apenas em mb, vai facilitar pra fazer as consultas
+2017-10-06 6:40 PM - Fiz um primeiro esboço do layout da home, acho que vai funcionar assim
 
 
