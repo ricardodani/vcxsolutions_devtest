@@ -74,11 +74,15 @@ class SMSPlan(models.Model):
         max_digits=8
     )
 
+    unlimited = models.BooleanField(
+        verbose_name='Ilimitados',
+        default=False
+    )
+
     def __str__(self):
-        if self.sms_pack_size:
-            return '{} SMS'.format(self.sms_pack_size)
-        else:
+        if self.unlimited:
             return 'SMS ILIMITADOS'
+        return '{} SMS'.format(self.sms_pack_size)
 
     class Meta:
         verbose_name = 'Plano de SMS Adicional'

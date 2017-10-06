@@ -1,5 +1,4 @@
 {% load staticfiles %}
-{% load compress %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -8,19 +7,13 @@
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <title>AceitaBitcoin.info</title>
+        <title>Simule o plano mais econômico!</title>
 
-        <link rel="icon" href="./favicon.ico">
         <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-4.0.0-beta-dist/css/bootstrap.min.css' %}" media="screen">
-
-        {% compress css %}
-        <link type="text/x-scss" rel="stylesheet" href="{% static 'scss/home.scss' %}" charset="utf-8">
-        <link type="text/x-scss" rel="stylesheet" href="{% static 'scss/header.scss' %}" charset="utf-8">
-        {% endcompress %}
+        <link type="text/css" rel="stylesheet" href="{% static 'css/home.css' %}" charset="utf-8">
     </head>
 
     <body>
-        {% include "frontend/navbar.html" %}
 
         <div class="container">
             {% block content %}

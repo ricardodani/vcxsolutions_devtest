@@ -73,6 +73,7 @@ class Command(BaseCommand):
         SMSPlan.objects.bulk_create([
             SMSPlan(
                 sms_pack_size=self._parse_sms_pack_size_2(plan[0]),
+                unlimited=True if 'ILIMITADOS' in plan[0] else False,
                 value=plan[1]
             )
             for plan in self.sms_plans
