@@ -13,8 +13,6 @@ body {
   line-height: 3rem;
 }
 
-@media (min-width: 48em) {
-  .container {
-    max-width: 46rem;
-  }
+.table-plano {
+    border: 3px solid green;
 }

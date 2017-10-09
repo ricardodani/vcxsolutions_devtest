@@ -3,7 +3,7 @@ from tarifas.models import Plan, SMSPlan, DataPlan
 
 
 class PlanAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'data_display', 'sms_pack', 'value')
+    list_display = ('__str__', 'minutes_franchise', 'data_display', 'sms_pack', 'value')
 
 
 class SMSPlanAdmin(admin.ModelAdmin):
