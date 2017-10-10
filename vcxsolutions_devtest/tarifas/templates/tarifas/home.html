@@ -34,72 +34,29 @@
 
 <hr />
 
-{% if not data.cheapest_plan %}
-<div class="alert alert-danger" role="alert">
-Não há um plano que atenda suas demandas!
-</div>
-
+{% if not data.cheapest %}
+    <div class="alert alert-danger" role="alert">
+    Não há um plano que atenda suas demandas!
+    </div>
 {% else %}
-<div class="alert alert-success" role="alert">
-    Encontrado plano para um <strong>consumo mínimo</strong>
-    <i>
-    {% if params.min_minutes %}{% spaceless %}
-    de {{ params.min_minutes }} mins,
-    {% endspaceless %}{% endif %}
-    {% if params.min_mb %}{% spaceless %}
-    de {{ params.min_mb }} MB,
-    {% endspaceless %}{% endif %}
-    {% if params.min_sms %}{% spaceless %}
-    de {{ params.min_sms }} SMS
-    </i>
-    {% endspaceless %}{% endif %}
-</div>
-
-<table class="table table-plano">
-    <thead class="thead-default">
-        <tr>
-            <th>Plano</th>
-            <th>Minutos</th>
-            <th>Dados</th>
-            <th>SMS</th>
-            <th>Valor</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <th scope="row" nowrap>{{ data.cheapest_plan }}</th>
-            <td>{{ data.cheapest_plan.minutes_franchise }} min</td>
-            <td>{{ data.cheapest_plan.data_display }}</td>
-            <td>{{ data.cheapest_plan.sms_pack }}</td>
-            <td>R$ {{ data.cheapest_plan.value }}</td>
-        </tr>
-        {% comment %}
-        <tr>
-            <th scope="row" nowrap>+ Dados</th>
-            <td>-</td>
-            <td>10 GB</td>
-            <td>-</td>
-            <td>R$ 18,00</td>
-        </tr>
-        <tr>
-            <th scope="row" nowrap>+ SMS</th>
-            <td>-</td>
-            <td>-</td>
-            <td>10 SMS</td>
-            <td>R$ 20,00</td>
-        </tr>
-        <tr>
-            <th scope="row">Total</th>
-            <td>100 min</td>
-            <td>20 GB</td>
-            <td>110 SMS</td>
-            <td><strong>R$ 38,00</strong></td>
-        </tr>
-        {% endcomment %}
-    </tbody>
-</table>
-{% if data.filtered_plans %}
-
-{% endif %}
+    <div class="alert alert-success" role="alert">
+        Encontrado plano para um <strong>consumo mínimo</strong>
+        <i>
+        {% if params.min_minutes %}{% spaceless %}
+        de {{ params.min_minutes }} mins,
+        {% endspaceless %}{% endif %}
+        {% if params.min_mb %}{% spaceless %}
+        de {{ params.min_mb }} MB,
+        {% endspaceless %}{% endif %}
+        {% if params.min_sms %}{% spaceless %}
+        de {{ params.min_sms }} SMS
+        </i>
+        {% endspaceless %}{% endif %}
+    </div>
+    {% include "tarifas/package.html" with package=data.cheapest %}
+    <h4>Outras opções</h4>
+    {% for package in data.other_options %}
+        {% include "tarifas/package.html" with package=package %}
+    {% endfor %}
 {% endif %}
 {% endblock content %}

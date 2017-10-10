@@ -1,0 +1,45 @@
+<table class="table table-plano">
+    <thead class="thead-default">
+        <tr>
+            <th>Plano</th>
+            <th>Minutos</th>
+            <th>Dados</th>
+            <th>SMS</th>
+            <th>Valor</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row" nowrap>{{ package.plan }}</th>
+            <td>{{ package.plan.minutes_franchise }} min</td>
+            <td>{{ package.plan.data_display }}</td>
+            <td>{{ package.plan.sms_pack }}</td>
+            <td>R$ {{ package.plan.value }}</td>
+        </tr>
+        {% for data_plan in package.data_plans %}
+        <tr>
+            <th scope="row" nowrap>+ Dados</th>
+            <td>-</td>
+            <td>{{ data_plan }}</td>
+            <td>-</td>
+            <td>R$ {{ data_plan.value }}</td>
+        </tr>
+        {% endfor %}
+        {% for sms_plan in package.sms_plans %}
+        <tr>
+            <th scope="row" nowrap>+ SMS</th>
+            <td>-</td>
+            <td>-</td>
+            <td>{{ sms_plan }}</td>
+            <td>R$ {{ sms_plan.value }}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <th scope="row">Total</th>
+            <td>{{ package.total_minutes }} min</td>
+            <td>{{ package.total_data }}</td>
+            <td>{{ package.total_sms }}</td>
+            <td><strong>R$ {{ package.total_value }}</strong></td>
+        </tr>
+    </tbody>
+</table>

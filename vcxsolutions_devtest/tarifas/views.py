@@ -1,81 +1,111 @@
 from django.views.generic import TemplateView
-from tarifas.models import Plan
+from tarifas.models import Plan, DataPlan
+
+
+class PackageSet(object):
+    '''
+    View utility class that get`s Plans based on `min_minutes` param,
+    instantiate a Package class from each of them. And calculates the
+    best affordable Package.
+    '''
+
+    def __init__(self, min_minutes=0, min_mb=0, min_sms=0):
+        self.min_minutes, self.min_mb, self.min_sms = min_minutes, min_mb, min_sms
+        self.base_query = self.get_base_query()
+        self.package_set = self.get_package_set()
+
+    def get_package_set(self):
+        return (
+            Package(plan, self.min_mb, self.min_sms)
+            for plan in self.base_query
+        )
+
+    def get_base_query(self):
+        return Plan.objects.filter(
+            minutes_franchise__gte=self.min_minutes
+        ).order_by('value')
+
+    def get_cheapest_packages(self):
+        return sorted(
+            self.package_set,
+            key=lambda package: package.total_value
+        )
+
+
+class Package(object):
+    '''
+    Utility class for a Package.
+    Package is a a Plan with or without aditional plans like SMSPlan and/or DataPlan,
+    based on the input parameters as min_mb and min_sms.
+    '''
+
+    data_plans = []
+
+    def get_data_plans(self):
+        if self.mb_left <= 0:
+            return self.data_plans
+        cheapest = DataPlan.objects.filter(
+            data_mb__gte=self.mb_left
+        ).order_by('value').first()
+        if cheapest:
+            self.mb_left = 0
+            self.data_plans.append(cheapest)
+        else:
+            biggest = DataPlan.objects.filter(
+                data_mb__lt=self.mb_left
+            ).order_by('-data_mb').first()
+            if biggest:
+                self.mb_left -= biggest.data_mb
+                self.data_plans.append(biggest)
+            else:
+                self.mb_left = 0
+        self.get_data_plans()
+
+    def get_additional_sms_plans(self):
+        if self.sms_left <= 0:
+            return []
+        # get cheapest gte sms_left
+        # if not, return infinite
+        # elsewhere return biggest
+
+    @property
+    def total_value(self):
+        return 1
+
+    def __init__(self, plan, min_mb, min_sms):
+        self.plan = plan
+        self.mb_left = min_mb - plan.data_mb
+        self.sms_left = min_sms - plan.sms_pack_size
+        self.data_plans = self.get_data_plans()
 
 
 class Home(TemplateView):
 
     template_name = 'tarifas/home.html'
 
-    @staticmethod
-    def _parse_int(string, default=None):
-        try:
-            return int(string)
-        except:
-            return default
-
-    def get_params(self, **kwargs):
-        '''
-        Return parsed GET params
-        '''
+    def get_params(self):
+        def parse_param(attrname, default=0):
+            try:
+                return int(self.request.GET.get(attrname, default))
+            except:
+                return default
         return {
-            'min_minutes': self._parse_int(
-                self.request.GET.get('min_minutes', None)
-            ),
-            'min_mb': self._parse_int(
-                self.request.GET.get('min_mb', None)
-            ),
-            'min_sms': self._parse_int(
-                self.request.GET.get('min_sms', None)
-            ),
+            'min_minutes': parse_param('min_minutes'),
+            'min_mb': parse_param('min_mb'),
+            'min_sms': parse_param('min_sms'),
         }
 
-    def get_cheapest_plan(self, min_minutes, min_mb, min_sms):
-        '''
-        Get the cheapest `Plan` combined with `SMSPlan`s and/or
-        `DataPlan`s.
-
-        He's what it should happen:
-
-        1. Filters Plan to minutes_franchise >= min_minutes
-        2. Order by value
-        3. Set the first one as possible solotion
-        4. Annotate how many MB needs to fulfill each plan
-        5. Annotate how many SMS needs to fulfill each plan
-
-        6.
-
-        7. Check if there's Ilimited SMS Plan
-            7.1. If yes, check if min_sms > (agg_sms + max sms_plan)
-                7.1.1. If yes, set SMSPlan as Ilimitado
-            7.1.2. If not, set min sms_plan based on (agg_sms + sms_plan)
-
-
-        '''
-        # if not min_minutes:
-            # filtered_plans = Plan.objects.order_by('value')
-        # else:
-            # filtered_plans = Plan.objects.order_by('value').filter(
-                # minutes_franchise__gte=min_minutes
-            # )
-        print(min_minutes, min_mb, min_sms)
+    def get_data(self, **kwargs):
+        pset = PackageSet(**kwargs)
+        cheapests = pset.get_cheapest_packages()
         return {
-            'cheapest_plan': Plan.objects.filter(
-                    minutes_franchise__gte=min_minutes if min_minutes else 0,
-                    data_mb__gte=min_mb if min_mb else 0,
-                    sms_pack_size__gte=min_sms if min_sms else 0
-                ).order_by('value').first(),
-            # 'base_plan': Plan.objects.all().first(),
-            # 'sms_plans': [],
-            # 'data_plans': [],
+            'cheapest': cheapests[0] if cheapests else None,
+            'other_options': cheapests[1:]
         }
 
     def get_context_data(self, **kwargs):
-        '''
-        Return template context
-        '''
         context = super().get_context_data(**kwargs)
-        params = self.get_params(**kwargs)
+        params = self.get_params()
         context['params'] = params
-        context['data'] = self.get_cheapest_plan(**params)
+        context['data'] = self.get_data(**params)
         return context
-
