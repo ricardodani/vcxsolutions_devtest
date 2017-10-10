@@ -1,4 +1,4 @@
-<table class="table table-plano">
+<table class="table {{ class }}">
     <thead class="thead-default">
         <tr>
             <th>Plano</th>
@@ -25,16 +25,16 @@
             <td>R$ {{ data_plan.value }}</td>
         </tr>
         {% endfor %}
-        {% for sms_plan in package.sms_plans %}
+        {% if package.sms_plan %}
         <tr>
             <th scope="row" nowrap>+ SMS</th>
             <td>-</td>
             <td>-</td>
-            <td>{{ sms_plan }}</td>
-            <td>R$ {{ sms_plan.value }}</td>
+            <td>{{ package.sms_plan }}</td>
+            <td>R$ {{ package.sms_plan.value }}</td>
         </tr>
-        {% endfor %}
-        <tr>
+        {% endif %}
+        <tr class="bg-light">
             <th scope="row">Total</th>
             <td>{{ package.plan.minutes_franchise }} min</td>
             <td>{{ package.total_data }}</td>

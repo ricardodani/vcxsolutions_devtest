@@ -60,28 +60,24 @@ class Package(object):
                     break
         return data_plans
 
-    def get_sms_plans(self):
-        # get cheapest gte sms_left
-        # if not, return infinite
-        # elsewhere return biggest
-        sms_plans = []
+    def get_sms_plan(self):
         if self.sms_left > 0:
             cheapest = SMSPlan.objects.filter(
                 sms_pack_size__gte=self.sms_left,
                 unlimited=False
             ).order_by('value').first()
             if cheapest:
-                sms_plans.append(cheapest)
+                return cheapest
             else:
                 unlimited = SMSPlan.objects.filter(unlimited=True).first()
                 if unlimited:
-                    sms_plans.append(unlimited)
-        return sms_plans
+                    return unlimited
 
     @property
     def total_value(self):
         value_data_plans = sum(plan.value for plan in self.data_plans)
-        return self.plan.value + value_data_plans
+        value_sms_plan = self.sms_plan.value if self.sms_plan else 0
+        return self.plan.value + value_data_plans + value_sms_plan
 
     @property
     def total_data(self):
@@ -91,6 +87,17 @@ class Package(object):
             return '{0:.3g}GB'.format(total / 1024)
         else:
             return '{}MB'.format(total)
+
+    @property
+    def total_sms(self):
+        if self.sms_plan and self.sms_plan.unlimited:
+            return str(self.sms_plan)
+        elif self.sms_plan:
+            return '{} SMS'.format(
+                self.plan.sms_pack_size + self.sms_plan.sms_pack_size
+            )
+        else:
+            return '{} SMS'.format(self.plan.sms_pack_size)
 
     def __init__(self, plan, min_mb, min_sms):
         self.plan, self.min_mb, self.min_sms = plan, min_mb, min_sms
@@ -102,9 +109,9 @@ class Package(object):
 
         if min_sms > plan.sms_pack_size:
             self.sms_left = min_sms - plan.sms_pack_size
-            self.sms_plans = self.get_sms_plans()
+            self.sms_plan = self.get_sms_plan()
         else:
-            self.sms_plans = []
+            self.sms_plan = None
         self.sms_left = min_sms - plan.sms_pack_size
 
 
@@ -129,7 +136,7 @@ class Home(TemplateView):
         cheapests = pset.get_cheapest_packages()
         return {
             'cheapest': cheapests[0] if cheapests else None,
-            'other_options': cheapests[1:]
+            'other_options': cheapests[1:4]
         }
 
     def get_context_data(self, **kwargs):

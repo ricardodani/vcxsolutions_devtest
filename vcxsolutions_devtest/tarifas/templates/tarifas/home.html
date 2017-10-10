@@ -1,14 +1,7 @@
 {% extends "tarifas/base.html" %}
 
 {% block content %}
-<div class="header clearfix">
-    <small class="float-right">
-        Autor: <strong>Ricardo Dani</strong>
-    </small>
-    <h3 class="text-muted">Simulador de Planos</h3>
-    <i>Simule o melhor plano de telefonia de acordo com seu consumo</i>
-</div>
-
+{% include "tarifas/navbar.html" %}
 <nav class="navbar navbar-light bg-light">
     <form action="/" method="GET">
     <div class="row">
@@ -53,10 +46,11 @@
         </i>
         {% endspaceless %}{% endif %}
     </div>
-    {% include "tarifas/package.html" with package=data.cheapest %}
+    <h2>Plano mais econômico</h2>
+    {% include "tarifas/package.html" with package=data.cheapest class='cheapest' %}
     <h4>Outras opções</h4>
     {% for package in data.other_options %}
-        {% include "tarifas/package.html" with package=package %}
+        {% include "tarifas/package.html" with package=package class='others' %}
     {% endfor %}
 {% endif %}
 {% endblock content %}

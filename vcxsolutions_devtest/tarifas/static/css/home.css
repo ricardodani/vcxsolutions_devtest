@@ -13,6 +13,10 @@ body {
   line-height: 3rem;
 }
 
-.table-plano {
+.cheapest {
     border: 3px solid green;
+}
+
+.others {
+    font-size: 80%;
 }
