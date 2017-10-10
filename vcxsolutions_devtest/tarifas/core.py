@@ -41,30 +41,40 @@ class Package(object):
     '''
 
     def get_data_plans(self):
+        mb_left = (
+            self.min_mb - self.plan.data_mb
+            if self.min_mb > self.plan.data_mb
+            else 0
+        )
         data_plans = []
-        while self.mb_left > 0:
+        while mb_left > 0:
             cheapest = DataPlan.objects.filter(
-                data_mb__gte=self.mb_left
+                data_mb__gte=mb_left
             ).order_by('value').first()
             if cheapest:
-                self.mb_left = 0
+                mb_left = 0
                 data_plans.append(cheapest)
                 break
             else:
                 biggest = DataPlan.objects.filter(
-                    data_mb__lt=self.mb_left
+                    data_mb__lt=mb_left
                 ).order_by('-data_mb').first()
                 if biggest:
-                    self.mb_left -= biggest.data_mb
+                    mb_left -= biggest.data_mb
                     data_plans.append(biggest)
                 else:
                     break
         return data_plans
 
     def get_sms_plan(self):
-        if self.sms_left > 0:
+        sms_left = (
+            self.min_sms - self.plan.sms_pack_size
+            if self.min_sms > self.plan.sms_pack_size
+            else 0
+        )
+        if sms_left > 0:
             cheapest = SMSPlan.objects.filter(
-                sms_pack_size__gte=self.sms_left,
+                sms_pack_size__gte=sms_left,
                 unlimited=False
             ).order_by('value').first()
             if cheapest:
@@ -102,15 +112,5 @@ class Package(object):
 
     def __init__(self, plan, min_mb, min_sms):
         self.plan, self.min_mb, self.min_sms = plan, min_mb, min_sms
-        if min_mb > plan.data_mb:
-            self.mb_left = min_mb - plan.data_mb
-            self.data_plans = self.get_data_plans()
-        else:
-            self.data_plans = []
-
-        if min_sms > plan.sms_pack_size:
-            self.sms_left = min_sms - plan.sms_pack_size
-            self.sms_plan = self.get_sms_plan()
-        else:
-            self.sms_plan = None
-        self.sms_left = min_sms - plan.sms_pack_size
+        self.data_plans = self.get_data_plans()
+        self.sms_plan = self.get_sms_plan()

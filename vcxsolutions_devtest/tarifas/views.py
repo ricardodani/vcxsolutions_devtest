@@ -1,5 +1,5 @@
 from django.views.generic import TemplateView
-from tarifas.utils import PackageSet
+from tarifas.core import PackageSet
 
 
 class Home(TemplateView):

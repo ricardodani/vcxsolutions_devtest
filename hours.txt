@@ -4,5 +4,7 @@
 2017-10-05 8:00 PM - Terminai o command pra importar os dados da planilha (manage.py import_tarifas)
 2017-10-06 4:50 PM - Mudei o modelo par salvar apenas em mb, vai facilitar pra fazer as consultas
 2017-10-06 6:40 PM - Fiz um primeiro esboço do layout da home, acho que vai funcionar assim
-
+2017-10-09 15:18 AM - Hoje eu termino :)
+2017-10-10 12:18 AM - Depois de muito quebrar a cabeça em como resolver o problema passei umas 6 horas desenvolvendo duas classes Package e PackageSet, basicamente a regra de negócios está toda nelas, em utils.py
+2017-10-10 12:26 AM - Ultimos cleanups, logica eu renomeei pra core.py ao invés de utils.py
 
