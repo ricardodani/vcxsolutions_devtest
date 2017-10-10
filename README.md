@@ -1,7 +1,7 @@
 Vcxsolutiosn - Dev TEST
 =======================
 
-A python django solution for the Vcx development test.
+A python django solution for the Vcx development test ( https://github.com/vcxsolutions/teste_fullstack ).
 
 Installing
 ----------
