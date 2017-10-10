@@ -36,7 +36,7 @@
         {% endfor %}
         <tr>
             <th scope="row">Total</th>
-            <td>{{ package.total_minutes }} min</td>
+            <td>{{ package.plan.minutes_franchise }} min</td>
             <td>{{ package.total_data }}</td>
             <td>{{ package.total_sms }}</td>
             <td><strong>R$ {{ package.total_value }}</strong></td>
