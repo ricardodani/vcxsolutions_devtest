@@ -1,3 +1,4 @@
+from collections import namedtuple
 from tarifas.models import Plan, SMSPlan, DataPlan
 
 
@@ -46,24 +47,32 @@ class Package(object):
             if self.min_mb > self.plan.data_mb
             else 0
         )
+        DataPlanPack = namedtuple('DataPlanPack', ['plan', 'quantity', 'value'])
         data_plans = []
-        while mb_left > 0:
-            cheapest = DataPlan.objects.filter(
-                data_mb__gte=mb_left
-            ).order_by('value').first()
-            if cheapest:
-                mb_left = 0
-                data_plans.append(cheapest)
-                break
-            else:
-                biggest = DataPlan.objects.filter(
-                    data_mb__lt=mb_left
-                ).order_by('-data_mb').first()
-                if biggest:
-                    mb_left -= biggest.data_mb
-                    data_plans.append(biggest)
-                else:
+
+        # first query if there's a slight bigger plan and rerturn it if yes
+        cheapest = DataPlan.objects.filter(
+            data_mb__gte=mb_left
+        ).order_by('value').first()
+        if cheapest:
+            data_plans = [DataPlanPack(cheapest, 1, cheapest.value)]
+        # if not, mount a set of DataPlanPack to fullfill the desired MB
+        else:
+            possible_data_plans = list(DataPlan.objects.filter(
+                data_mb__lt=mb_left
+            ).order_by('-data_mb'))
+            while mb_left > 0:
+                try:
+                    plan_to_add = possible_data_plans.pop(0)
+                except IndexError:
                     break
+                quantity = mb_left // plan_to_add.data_mb
+                data_plans.append(
+                    DataPlanPack(
+                        plan_to_add, quantity, plan_to_add.value * quantity
+                    )
+                )
+                mb_left = (mb_left % plan_to_add.data_mb)
         return data_plans
 
     def get_sms_plan(self):
@@ -86,13 +95,19 @@ class Package(object):
 
     @property
     def total_value(self):
-        value_data_plans = sum(plan.value for plan in self.data_plans)
+        value_data_plans = sum(
+            (plan_pack.quantity * plan_pack.plan.value)
+            for plan_pack in self.data_plans
+        )
         value_sms_plan = self.sms_plan.value if self.sms_plan else 0
         return self.plan.value + value_data_plans + value_sms_plan
 
     @property
     def total_data(self):
-        mb_data_plans = sum(plan.data_mb for plan in self.data_plans)
+        mb_data_plans = sum(
+            (plan_pack.plan.data_mb * plan_pack.quantity)
+            for plan_pack in self.data_plans
+        )
         total = self.plan.data_mb + mb_data_plans
         if total >= 1024:
             return '{0:.3g}GB'.format(total / 1024)
