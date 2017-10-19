@@ -1,24 +1,26 @@
 Vcxsolutiosn - Dev TEST
 =======================
 
-A python django solution for the Vcx development test.
+A python django solution for the Vcx development test ( https://github.com/vcxsolutions/teste_fullstack ).
 
 Installing
 ----------
 
-Install the python dependencies in a clean python 3 environment::
+Install the python dependencies in a clean python 3 environment:
 
-    $ pip install -r requirements
+    $ pip install -r requirements.txt
 
+Open on the project:
 
-Then, run the migrations::
+    $ cd vcxsolutions_devtest
 
-    $ ./vcxsolutions_devtest/manage.py runserver
+Then, run the migrations:
 
+    $ ./manage.py migrate
 
 After it, import the "Tarifas" data sheet::
 
-    $ ./vcxsolutions_devtest/manage.py import_tarifas
+    $ ./manage.py import_tarifas
 
 
 Running
@@ -26,12 +28,12 @@ Running
 
 To run, type::
 
-    $ ./vcxsolutions_devtest/manage.py runserver
+    $ ./manage.py runserver
 
 
 To open the application on the browser, open:
 
-    https://localhost:8000/
+    http://localhost:8000/
 
 
 Admin
@@ -40,4 +42,4 @@ Admin
 To access the admin to manage imported data open:
 
 
-    https://localhost:8000/admin/
+    http://localhost:8000/admin/
