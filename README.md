@@ -1,7 +1,6 @@
-Vcxsolutiosn - Dev TEST
-=======================
+Simulador de planos
+====================
 
-A python django solution for the Vcx development test ( https://github.com/vcxsolutions/teste_fullstack ).
 
 Installing
 ----------
